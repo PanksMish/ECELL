@@ -1,0 +1,95 @@
+# EOSNM Default Configuration
+# This file contains all default parameters for the EOSNM framework
+
+# Data configuration
+data:
+  path: null  # null = generate synthetic data, or provide path to CSV
+  n_students: 391  # Number of students (for synthetic data)
+  random_state: 42  # Random seed for reproducibility
+
+# Model parameters
+model:
+  # Skill growth model (Logistic growth with barriers)
+  # ds/dt = α * s(t) * (1 - s(t)/S) - β * B(t)
+  skill_growth:
+    alpha: 0.5     # Intrinsic learning rate
+    S_max: 10.0    # Maximum skill saturation level
+    beta: 0.3      # Barrier impact coefficient
+  
+  # Network growth model (Preferential attachment)
+  # dk/dt = η * k(t) / Σk_j(t) * Λ(t)
+  network_growth:
+    eta: 0.3       # Network growth rate
+    kappa: 1.0     # Stagnation prevention constant
+  
+  # Employability index weights
+  # E(t) = w_s * s(t)/S + w_k * k(t)/K + w_x * x
+  employability_index:
+    w_skill: 0.65      # Weight for skill component
+    w_network: 0.35    # Weight for network component
+    w_context: 0.0     # Weight for contextual features (reserved)
+
+# Experimental setup
+experiment:
+  time_horizon: 6  # Planning horizon in months
+  
+  # Budget fractions to test (as proportion of cohort)
+  budget_fractions:
+    - 0.05   # 5%
+    - 0.10   # 10%
+    - 0.15   # 15%
+    - 0.20   # 20%
+  
+  # Statistical evaluation parameters
+  n_bootstrap: 100         # Bootstrap iterations for confidence intervals
+  monte_carlo_runs: 100    # Monte Carlo runs for robustness testing
+  confidence_level: 0.95   # Confidence level (95%)
+  
+  # Intervention parameters
+  intervention:
+    barrier_reduction: 0.3   # Proportion of barrier reduction (30%)
+    activity_boost: 0.4      # Proportion of activity increase (40%)
+
+# Output configuration
+output:
+  results_dir: "results"          # Directory for results
+  figures_dir: "figures"          # Directory for figures
+  save_predictions: true          # Save individual predictions
+  save_allocations: true          # Save allocation decisions
+  figure_format: "png"            # Figure format (png, pdf, svg)
+  figure_dpi: 300                 # Figure resolution
+
+# Evaluation metrics configuration
+evaluation:
+  # Ranking metrics
+  precision_k_values: [10, 20, 50]  # Values of k for Precision@k
+  recall_k_values: [10, 20, 50]     # Values of k for Recall@k
+  
+  # Cumulative gain thresholds
+  cumulative_gain_fractions: [5, 10, 15, 20, 25, 30, 40, 50]
+  
+  # Fairness analysis
+  compute_group_coverage: true      # Compute group coverage ratios
+  fairness_groups: ["department"]   # Demographic groups for fairness
+
+# Baseline methods to compare
+baselines:
+  - "Random"
+  - "Skill-only"
+  - "Network-only"
+  - "SEM"
+
+# EOSNM variants to evaluate
+eosnm_variants:
+  - "EOSNM-Greedy"
+  - "EOSNM-MIP"
+
+# Logging configuration
+logging:
+  level: "INFO"  # Logging level (DEBUG, INFO, WARNING, ERROR)
+  log_file: "eosnm.log"  # Log file path (null for no file logging)
+
+# Reproducibility
+reproducibility:
+  set_seeds: true        # Set all random seeds
+  deterministic: true    # Use deterministic algorithms where possible
